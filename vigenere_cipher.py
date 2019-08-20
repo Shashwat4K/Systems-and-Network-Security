@@ -25,12 +25,11 @@ def vigenere_cipher(plain_text, key):
     for j in range(ceil(text_size/block_size)):
         offset = j * block_size
         for i in range(block_size):
-            if i + offset < text_size:
-                coords = get_coordinates(plain_text[i+offset], key[i])
-                result += get_vigenere_value(coords)
-            else:
-                break
-
+            if i + offset == text_size:
+                break    
+            coords = get_coordinates(plain_text[i+offset], key[i])
+            result += get_vigenere_value(coords)
+            
     return result
 
 create_vigenere_tableau()
