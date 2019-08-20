@@ -6,6 +6,11 @@ character_dict = dict(zip(list(universe), range(26)))
 character_dict_inv = dict(enumerate(list(universe.lower())))
 tableau = list()
 
+'''
+This code can even be written without using above dictionaries by using 'ord()' and 'chr()'
+But use of dictionaries can calculate answer faster, as I observed.
+'''
+
 def get_coordinates(plain_character, key_character):
     return (character_dict[plain_character], character_dict[key_character.upper()])
 
