@@ -6,8 +6,6 @@ character_dict = dict(zip(list(universe), range(26)))
 character_dict_inv = dict(enumerate(list(universe.lower())))
 tableau = list()
 
-# TODO: Encryption is working (len(key) <= len(plain_text)), function for decryption is to be added. 
-
 def get_coordinates(plain_character, key_character):
     return (character_dict[plain_character], character_dict[key_character.upper()])
 
@@ -49,6 +47,20 @@ def vigenere_cipher_without_tableau(plain_text, key):
     
     return result.upper()       
 
+def vigenere_cipher_decryption(cipher_text, key):
+    block_size = len(key)
+    text_size = len(cipher_text)
+    result = ''
+    for j in range(ceil(text_size / block_size)):
+        offset = j * block_size
+        for i in range(block_size):
+            if i+offset == text_size:
+                break
+            c = get_coordinates(cipher_text[i+offset], key[i])
+            result = result + character_dict_inv[(c[0] + (26 - c[1])) % 26]
+
+    return result.upper()   
+
 create_vigenere_tableau()
 
 input_plain_text = input('Enter plain text: ')
@@ -61,7 +73,10 @@ end_time = time.time()
 print('Time taken (with tableu)= {} seconds'.format(end_time-start_time))
 
 start_time = time.time()
-print(vigenere_cipher_without_tableau(input_plain_text.upper(), input_key.lower()))
+cipher = vigenere_cipher_without_tableau(input_plain_text.upper(), input_key.lower())
+print(cipher)
 end_time = time.time()
 
 print('Time taken (without tableu)= {} seconds'.format(end_time-start_time))
+
+print('Decrypted plain-text: {}'.format(vigenere_cipher_decryption(cipher, input_key)))
