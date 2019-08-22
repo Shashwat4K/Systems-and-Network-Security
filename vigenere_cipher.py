@@ -9,6 +9,9 @@ tableau = list()
 '''
 This code can even be written without using above dictionaries by using 'ord()' and 'chr()'
 But use of dictionaries can calculate answer faster, as I observed.
+
+Also, Whitespaces in plain-text aren't managed here, so enter continuous strings. I'll update the code
+in later commits.
 '''
 
 def get_coordinates(plain_character, key_character):
