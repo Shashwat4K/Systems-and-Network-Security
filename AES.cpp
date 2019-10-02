@@ -120,15 +120,6 @@ bitset<8> multiplicative_inverse(bitset<8> input_polynomial)
 
 bitset<WORD_SIZE> RotWord(bitset<WORD_SIZE> input_word)
 {
-    /*
-    string res = "";   
-    for(int i = 0; i < WORD_SIZE-1; i += BYTE_SIZE)
-    {
-        bitset<BYTE_SIZE> temp(input_word.to_string().substr(i, 8));
-        temp = temp << 1 | temp >> (BYTE_SIZE-1); // Rotate every byte to the left by one position
-        res = res + temp.to_string();
-    }
-    */
     bitset<WORD_SIZE> retval(input_word.to_string().substr(8, 24) + input_word.to_string().substr(0,8));
     return retval;
 }
@@ -270,7 +261,6 @@ void AES::printState()
 
 string AES::AES_Encryption(string& PlainText)
 {
-    //cout << PlainText << endl;
     // Build initial state
     for(int i = 0; i < 4; i++)
     {
@@ -281,13 +271,11 @@ string AES::AES_Encryption(string& PlainText)
         }
         state.push_back(word);
     }
-    //cout << "Initial State!" << endl;
     //printState();
     for(int round = 0; round <= 10; round++)
     {
         AES_Encryption_Round(round);
     }
-    //cout << "Encryption is: " << endl;
     // printState();
     string result = "";
     for(int i = 0; i < 4; i++){
@@ -410,9 +398,6 @@ int main()
     for(int i = 0; i < AES_key_hex.length(); i++){
         AES_key_bin = AES_key_bin + HexToBinary(AES_key_hex.at(i)).to_string();
     }
-    //cout << AES_key_bin << endl;
-    //bitset<INPUT_SIZE> input(plain_text_bin);
-    //bitset<KEY_SIZE> AES_key(AES_key_bin);
     
     AES* obj = new AES(AES_key_bin);
     string enc = obj->AES_Encryption(plain_text_bin);
@@ -421,3 +406,6 @@ int main()
 }
 // Sample Input: 00112233445566778899aabbccddeeff Key: 000102030405060708090a0b0c0d0e0f
 // SampleOutput: 69c4e0d86a7b0430d8cdb78070b4c55a DEc: 00112233445566778899aabbccddeeff
+/*
+Written By- Shashwat Kadam (10/02/2019).
+*/
