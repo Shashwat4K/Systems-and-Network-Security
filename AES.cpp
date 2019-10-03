@@ -5,8 +5,6 @@
 #define WORD_SIZE 32
 using namespace std;
 
-// TODO: AES_Decryption and Electronic Code Book input/output
-
 bitset<BYTE_SIZE> SubByteTable[16][16] = {    
     {bitset<BYTE_SIZE>(0x63), bitset<BYTE_SIZE>(0x7C), bitset<BYTE_SIZE>(0x77), bitset<BYTE_SIZE>(0x7B), bitset<BYTE_SIZE>(0xF2), bitset<BYTE_SIZE>(0x6B), bitset<BYTE_SIZE>(0x6F), bitset<BYTE_SIZE>(0xC5), bitset<BYTE_SIZE>(0x30), bitset<BYTE_SIZE>(0x01), bitset<BYTE_SIZE>(0x67), bitset<BYTE_SIZE>(0x2B), bitset<BYTE_SIZE>(0xFE), bitset<BYTE_SIZE>(0xD7), bitset<BYTE_SIZE>(0xAB), bitset<BYTE_SIZE>(0x76)},
     {bitset<BYTE_SIZE>(0xCA), bitset<BYTE_SIZE>(0x82), bitset<BYTE_SIZE>(0xC9), bitset<BYTE_SIZE>(0x7D), bitset<BYTE_SIZE>(0xFA), bitset<BYTE_SIZE>(0x59), bitset<BYTE_SIZE>(0x47), bitset<BYTE_SIZE>(0xF0), bitset<BYTE_SIZE>(0xAD), bitset<BYTE_SIZE>(0xD4), bitset<BYTE_SIZE>(0xA2), bitset<BYTE_SIZE>(0xAF), bitset<BYTE_SIZE>(0x9C), bitset<BYTE_SIZE>(0xA4), bitset<BYTE_SIZE>(0x72), bitset<BYTE_SIZE>(0xC0)},
@@ -24,6 +22,25 @@ bitset<BYTE_SIZE> SubByteTable[16][16] = {
     {bitset<BYTE_SIZE>(0x70), bitset<BYTE_SIZE>(0x3E), bitset<BYTE_SIZE>(0xB5), bitset<BYTE_SIZE>(0x66), bitset<BYTE_SIZE>(0x48), bitset<BYTE_SIZE>(0x03), bitset<BYTE_SIZE>(0xF6), bitset<BYTE_SIZE>(0x0E), bitset<BYTE_SIZE>(0x61), bitset<BYTE_SIZE>(0x35), bitset<BYTE_SIZE>(0x57), bitset<BYTE_SIZE>(0xB9), bitset<BYTE_SIZE>(0x86), bitset<BYTE_SIZE>(0xC1), bitset<BYTE_SIZE>(0x1D), bitset<BYTE_SIZE>(0x9E)},
     {bitset<BYTE_SIZE>(0xE1), bitset<BYTE_SIZE>(0xF8), bitset<BYTE_SIZE>(0x98), bitset<BYTE_SIZE>(0x11), bitset<BYTE_SIZE>(0x69), bitset<BYTE_SIZE>(0xD9), bitset<BYTE_SIZE>(0x8E), bitset<BYTE_SIZE>(0x94), bitset<BYTE_SIZE>(0x9B), bitset<BYTE_SIZE>(0x1E), bitset<BYTE_SIZE>(0x87), bitset<BYTE_SIZE>(0xE9), bitset<BYTE_SIZE>(0xCE), bitset<BYTE_SIZE>(0x55), bitset<BYTE_SIZE>(0x28), bitset<BYTE_SIZE>(0xDF)},
     {bitset<BYTE_SIZE>(0x8C), bitset<BYTE_SIZE>(0xA1), bitset<BYTE_SIZE>(0x89), bitset<BYTE_SIZE>(0x0D), bitset<BYTE_SIZE>(0xBF), bitset<BYTE_SIZE>(0xE6), bitset<BYTE_SIZE>(0x42), bitset<BYTE_SIZE>(0x68), bitset<BYTE_SIZE>(0x41), bitset<BYTE_SIZE>(0x99), bitset<BYTE_SIZE>(0x2D), bitset<BYTE_SIZE>(0x0F), bitset<BYTE_SIZE>(0xB0), bitset<BYTE_SIZE>(0x54), bitset<BYTE_SIZE>(0xBB), bitset<BYTE_SIZE>(0x16)}
+};
+
+bitset<BYTE_SIZE> InvSubByteTable[16][16] = {
+    {bitset<BYTE_SIZE>(0x52), bitset<BYTE_SIZE>(0x09), bitset<BYTE_SIZE>(0x6a), bitset<BYTE_SIZE>(0xd5), bitset<BYTE_SIZE>(0x30), bitset<BYTE_SIZE>(0x36), bitset<BYTE_SIZE>(0xa5), bitset<BYTE_SIZE>(0x38), bitset<BYTE_SIZE>(0xbf), bitset<BYTE_SIZE>(0x40), bitset<BYTE_SIZE>(0xa3), bitset<BYTE_SIZE>(0x9e), bitset<BYTE_SIZE>(0x81), bitset<BYTE_SIZE>(0xf3), bitset<BYTE_SIZE>(0xd7), bitset<BYTE_SIZE>(0xfb)},
+    {bitset<BYTE_SIZE>(0x7c), bitset<BYTE_SIZE>(0xe3), bitset<BYTE_SIZE>(0x39), bitset<BYTE_SIZE>(0x82), bitset<BYTE_SIZE>(0x9b), bitset<BYTE_SIZE>(0x2f), bitset<BYTE_SIZE>(0xff), bitset<BYTE_SIZE>(0x87), bitset<BYTE_SIZE>(0x34), bitset<BYTE_SIZE>(0x8e), bitset<BYTE_SIZE>(0x43), bitset<BYTE_SIZE>(0x44), bitset<BYTE_SIZE>(0xc4), bitset<BYTE_SIZE>(0xde), bitset<BYTE_SIZE>(0xe9), bitset<BYTE_SIZE>(0xcb)},
+    {bitset<BYTE_SIZE>(0x54), bitset<BYTE_SIZE>(0x7b), bitset<BYTE_SIZE>(0x94), bitset<BYTE_SIZE>(0x32), bitset<BYTE_SIZE>(0xa6), bitset<BYTE_SIZE>(0xc2), bitset<BYTE_SIZE>(0x23), bitset<BYTE_SIZE>(0x3d), bitset<BYTE_SIZE>(0xee), bitset<BYTE_SIZE>(0x4c), bitset<BYTE_SIZE>(0x95), bitset<BYTE_SIZE>(0x0b), bitset<BYTE_SIZE>(0x42), bitset<BYTE_SIZE>(0xfa), bitset<BYTE_SIZE>(0xc3), bitset<BYTE_SIZE>(0x4e)},
+    {bitset<BYTE_SIZE>(0x08), bitset<BYTE_SIZE>(0x2e), bitset<BYTE_SIZE>(0xa1), bitset<BYTE_SIZE>(0x66), bitset<BYTE_SIZE>(0x28), bitset<BYTE_SIZE>(0xd9), bitset<BYTE_SIZE>(0x24), bitset<BYTE_SIZE>(0xb2), bitset<BYTE_SIZE>(0x76), bitset<BYTE_SIZE>(0x5b), bitset<BYTE_SIZE>(0xa2), bitset<BYTE_SIZE>(0x49), bitset<BYTE_SIZE>(0x6d), bitset<BYTE_SIZE>(0x8b), bitset<BYTE_SIZE>(0xd1), bitset<BYTE_SIZE>(0x25)},
+    {bitset<BYTE_SIZE>(0x72), bitset<BYTE_SIZE>(0xf8), bitset<BYTE_SIZE>(0xf6), bitset<BYTE_SIZE>(0x64), bitset<BYTE_SIZE>(0x86), bitset<BYTE_SIZE>(0x68), bitset<BYTE_SIZE>(0x98), bitset<BYTE_SIZE>(0x16), bitset<BYTE_SIZE>(0xd4), bitset<BYTE_SIZE>(0xa4), bitset<BYTE_SIZE>(0x5c), bitset<BYTE_SIZE>(0xcc), bitset<BYTE_SIZE>(0x5d), bitset<BYTE_SIZE>(0x65), bitset<BYTE_SIZE>(0xb6), bitset<BYTE_SIZE>(0x92)},
+    {bitset<BYTE_SIZE>(0x6c), bitset<BYTE_SIZE>(0x70), bitset<BYTE_SIZE>(0x48), bitset<BYTE_SIZE>(0x50), bitset<BYTE_SIZE>(0xfd), bitset<BYTE_SIZE>(0xed), bitset<BYTE_SIZE>(0xb9), bitset<BYTE_SIZE>(0xda), bitset<BYTE_SIZE>(0x5e), bitset<BYTE_SIZE>(0x15), bitset<BYTE_SIZE>(0x46), bitset<BYTE_SIZE>(0x57), bitset<BYTE_SIZE>(0xa7), bitset<BYTE_SIZE>(0x8d), bitset<BYTE_SIZE>(0x9d), bitset<BYTE_SIZE>(0x84)},
+    {bitset<BYTE_SIZE>(0x90), bitset<BYTE_SIZE>(0xd8), bitset<BYTE_SIZE>(0xab), bitset<BYTE_SIZE>(0x00), bitset<BYTE_SIZE>(0x8c), bitset<BYTE_SIZE>(0xbc), bitset<BYTE_SIZE>(0xd3), bitset<BYTE_SIZE>(0x0a), bitset<BYTE_SIZE>(0xf7), bitset<BYTE_SIZE>(0xe4), bitset<BYTE_SIZE>(0x58), bitset<BYTE_SIZE>(0x05), bitset<BYTE_SIZE>(0xb8), bitset<BYTE_SIZE>(0xb3), bitset<BYTE_SIZE>(0x45), bitset<BYTE_SIZE>(0x06)},
+    {bitset<BYTE_SIZE>(0xd0), bitset<BYTE_SIZE>(0x2c), bitset<BYTE_SIZE>(0x1e), bitset<BYTE_SIZE>(0x8f), bitset<BYTE_SIZE>(0xca), bitset<BYTE_SIZE>(0x3f), bitset<BYTE_SIZE>(0x0f), bitset<BYTE_SIZE>(0x02), bitset<BYTE_SIZE>(0xc1), bitset<BYTE_SIZE>(0xaf), bitset<BYTE_SIZE>(0xbd), bitset<BYTE_SIZE>(0x03), bitset<BYTE_SIZE>(0x01), bitset<BYTE_SIZE>(0x13), bitset<BYTE_SIZE>(0x8a), bitset<BYTE_SIZE>(0x6b)},
+    {bitset<BYTE_SIZE>(0x3a), bitset<BYTE_SIZE>(0x91), bitset<BYTE_SIZE>(0x11), bitset<BYTE_SIZE>(0x41), bitset<BYTE_SIZE>(0x4f), bitset<BYTE_SIZE>(0x67), bitset<BYTE_SIZE>(0xdc), bitset<BYTE_SIZE>(0xea), bitset<BYTE_SIZE>(0x97), bitset<BYTE_SIZE>(0xf2), bitset<BYTE_SIZE>(0xcf), bitset<BYTE_SIZE>(0xce), bitset<BYTE_SIZE>(0xf0), bitset<BYTE_SIZE>(0xb4), bitset<BYTE_SIZE>(0xe6), bitset<BYTE_SIZE>(0x73)},
+    {bitset<BYTE_SIZE>(0x96), bitset<BYTE_SIZE>(0xac), bitset<BYTE_SIZE>(0x74), bitset<BYTE_SIZE>(0x22), bitset<BYTE_SIZE>(0xe7), bitset<BYTE_SIZE>(0xad), bitset<BYTE_SIZE>(0x35), bitset<BYTE_SIZE>(0x85), bitset<BYTE_SIZE>(0xe2), bitset<BYTE_SIZE>(0xf9), bitset<BYTE_SIZE>(0x37), bitset<BYTE_SIZE>(0xe8), bitset<BYTE_SIZE>(0x1c), bitset<BYTE_SIZE>(0x75), bitset<BYTE_SIZE>(0xdf), bitset<BYTE_SIZE>(0x6e)},
+    {bitset<BYTE_SIZE>(0x47), bitset<BYTE_SIZE>(0xf1), bitset<BYTE_SIZE>(0x1a), bitset<BYTE_SIZE>(0x71), bitset<BYTE_SIZE>(0x1d), bitset<BYTE_SIZE>(0x29), bitset<BYTE_SIZE>(0xc5), bitset<BYTE_SIZE>(0x89), bitset<BYTE_SIZE>(0x6f), bitset<BYTE_SIZE>(0xb7), bitset<BYTE_SIZE>(0x62), bitset<BYTE_SIZE>(0x0e), bitset<BYTE_SIZE>(0xaa), bitset<BYTE_SIZE>(0x18), bitset<BYTE_SIZE>(0xbe), bitset<BYTE_SIZE>(0x1b)},
+    {bitset<BYTE_SIZE>(0xfc), bitset<BYTE_SIZE>(0x56), bitset<BYTE_SIZE>(0x3e), bitset<BYTE_SIZE>(0x4b), bitset<BYTE_SIZE>(0xc6), bitset<BYTE_SIZE>(0xd2), bitset<BYTE_SIZE>(0x79), bitset<BYTE_SIZE>(0x20), bitset<BYTE_SIZE>(0x9a), bitset<BYTE_SIZE>(0xdb), bitset<BYTE_SIZE>(0xc0), bitset<BYTE_SIZE>(0xfe), bitset<BYTE_SIZE>(0x78), bitset<BYTE_SIZE>(0xcd), bitset<BYTE_SIZE>(0x5a), bitset<BYTE_SIZE>(0xf4)},
+    {bitset<BYTE_SIZE>(0x1f), bitset<BYTE_SIZE>(0xdd), bitset<BYTE_SIZE>(0xa8), bitset<BYTE_SIZE>(0x33), bitset<BYTE_SIZE>(0x88), bitset<BYTE_SIZE>(0x07), bitset<BYTE_SIZE>(0xc7), bitset<BYTE_SIZE>(0x31), bitset<BYTE_SIZE>(0xb1), bitset<BYTE_SIZE>(0x12), bitset<BYTE_SIZE>(0x10), bitset<BYTE_SIZE>(0x59), bitset<BYTE_SIZE>(0x27), bitset<BYTE_SIZE>(0x80), bitset<BYTE_SIZE>(0xec), bitset<BYTE_SIZE>(0x5f)},
+    {bitset<BYTE_SIZE>(0x60), bitset<BYTE_SIZE>(0x51), bitset<BYTE_SIZE>(0x7f), bitset<BYTE_SIZE>(0xa9), bitset<BYTE_SIZE>(0x19), bitset<BYTE_SIZE>(0xb5), bitset<BYTE_SIZE>(0x4a), bitset<BYTE_SIZE>(0x0d), bitset<BYTE_SIZE>(0x2d), bitset<BYTE_SIZE>(0xe5), bitset<BYTE_SIZE>(0x7a), bitset<BYTE_SIZE>(0x9f), bitset<BYTE_SIZE>(0x93), bitset<BYTE_SIZE>(0xc9), bitset<BYTE_SIZE>(0x9c), bitset<BYTE_SIZE>(0xef)},
+    {bitset<BYTE_SIZE>(0xa0), bitset<BYTE_SIZE>(0xe0), bitset<BYTE_SIZE>(0x3b), bitset<BYTE_SIZE>(0x4d), bitset<BYTE_SIZE>(0xae), bitset<BYTE_SIZE>(0x2a), bitset<BYTE_SIZE>(0xf5), bitset<BYTE_SIZE>(0xb0), bitset<BYTE_SIZE>(0xc8), bitset<BYTE_SIZE>(0xeb), bitset<BYTE_SIZE>(0xbb), bitset<BYTE_SIZE>(0x3c), bitset<BYTE_SIZE>(0x83), bitset<BYTE_SIZE>(0x53), bitset<BYTE_SIZE>(0x99), bitset<BYTE_SIZE>(0x61)},
+    {bitset<BYTE_SIZE>(0x17), bitset<BYTE_SIZE>(0x2b), bitset<BYTE_SIZE>(0x04), bitset<BYTE_SIZE>(0x7e), bitset<BYTE_SIZE>(0xba), bitset<BYTE_SIZE>(0x77), bitset<BYTE_SIZE>(0xd6), bitset<BYTE_SIZE>(0x26), bitset<BYTE_SIZE>(0xe1), bitset<BYTE_SIZE>(0x69), bitset<BYTE_SIZE>(0x14), bitset<BYTE_SIZE>(0x63), bitset<BYTE_SIZE>(0x55), bitset<BYTE_SIZE>(0x21), bitset<BYTE_SIZE>(0x0c), bitset<BYTE_SIZE>(0x7d)}
 };
 
 bitset<4> HexToBinary(char c){
@@ -74,6 +91,20 @@ char BinaryToHex(bitset<4> b)
         case 15: retval = 'f'; break;
     }
     return retval;
+}
+
+int modulo(int a, int n) // Return a mod n
+{
+    if(a >= 0){
+        return a%n;
+    }else{
+        int q = (-a)/n, r = (-a)%n;
+        if(r == 0){
+            return 0;
+        }else{
+            return a + (q+1)*n;
+        }
+    }
 }
 
 int get_degree(bitset<BYTE_SIZE>& polynomial)
@@ -160,6 +191,7 @@ class AES
         bitset<INPUT_SIZE> Input;
         bitset<INPUT_SIZE> Output;
         vector<vector<bitset<BYTE_SIZE>>> state;
+        vector<vector<bitset<BYTE_SIZE>>> D_state;
         bitset<KEY_SIZE> AES_key;
         bitset<BYTE_SIZE> ConstMatrix[4][4] = {
             {bitset<BYTE_SIZE>(0x02), bitset<BYTE_SIZE>(0x03), bitset<BYTE_SIZE>(0x01), bitset<BYTE_SIZE>(0x01)},
@@ -188,7 +220,7 @@ class AES
             bitset<WORD_SIZE>(0x36000000)
         };
         void KeyExpansion();
-        void AddRoundKey(int round_number);
+        void AddRoundKey(int round_number, bool e_or_d);
         // Encryption methods
         void SubBytes();
         void ShiftRows();
@@ -201,9 +233,9 @@ class AES
         void AES_Decryption_Round(int round_number);
     public:
         AES(string& AES_Key);
-        void printState();
-        string AES_Encryption(string& PlainText);
-        string AES_Decryption(string& CipherText);
+        void printState(bool e_or_d);
+        string AES_Encryption(string& PlainText, bool is_empty);
+        string AES_Decryption(string& CipherText, bool is_empty);
         
 };
 
@@ -247,35 +279,64 @@ void AES::KeyExpansion()
     */
 }
 
-void AES::printState()
+void AES::printState(bool e_or_d)
 {
     string str;
-    for(int i = 0; i < 4; i++){
-	    for(int j = 0; j < 4; j++){
-	        str = state[j][i].to_string();
-            cout << BinaryToHex(bitset<4>(str.substr(0,4))) << BinaryToHex(bitset<4>(str.substr(4,4)));
-	    }
-	}
-    cout << endl;
+    if(e_or_d == true){
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                str = state[j][i].to_string();
+                cout << BinaryToHex(bitset<4>(str.substr(0,4))) << BinaryToHex(bitset<4>(str.substr(4,4)));
+            }
+        }
+        cout << endl;
+    }else{
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                str = D_state[j][i].to_string();
+                cout << BinaryToHex(bitset<4>(str.substr(0,4))) << BinaryToHex(bitset<4>(str.substr(4,4)));
+            }
+        }
+        cout << endl;
+    }
+    
 }
 
-string AES::AES_Encryption(string& PlainText)
+string AES::AES_Encryption(string& PlainText, bool is_empty)
 {
+    //cout << PlainText << endl;
     // Build initial state
-    for(int i = 0; i < 4; i++)
+    if(is_empty)
     {
-        vector<bitset<BYTE_SIZE>> word;
-        for(int j = BYTE_SIZE*i; j < INPUT_SIZE-1; j+=32)
+        for(int i = 0; i < 4; i++)
         {
-            word.push_back(bitset<BYTE_SIZE>(PlainText.substr(j, BYTE_SIZE)));
+            vector<bitset<BYTE_SIZE>> word;
+            for(int j = BYTE_SIZE*i; j < INPUT_SIZE-1; j+=32)
+            {
+                word.push_back(bitset<BYTE_SIZE>(PlainText.substr(j, BYTE_SIZE)));
+            }
+            state.push_back(word);
         }
-        state.push_back(word);
     }
+    else
+    {
+        int k = 0;
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                state[j][i] = bitset<BYTE_SIZE>(PlainText.substr(k, BYTE_SIZE));
+                k += 8;
+            }
+        }
+    }
+    //cout << "Initial State!" << endl;
     //printState();
     for(int round = 0; round <= 10; round++)
     {
         AES_Encryption_Round(round);
     }
+    //cout << "Encryption is: " << endl;
     // printState();
     string result = "";
     for(int i = 0; i < 4; i++){
@@ -314,7 +375,7 @@ void AES::ShiftRows()
     for(int i = 0; i < 4; i++){
         vector<bitset<BYTE_SIZE>> t;
         for(int j = 0; j < 4; j++){
-            t.push_back(state[i][(i+j)%4]);
+            t.push_back(state[i][modulo(i+j, 4)]);
         }
         temp.push_back(t);
     }
@@ -351,15 +412,32 @@ void AES::MixColumns()
     }
 }
 
-void AES::AddRoundKey(int round_number)
+void AES::AddRoundKey(int round_number, bool e_or_d)
 {
-    for(int i = 0; i < 4; i++)
+    if(e_or_d == true) // Encryption mode
     {
-        string current_key = (KeyMatrix[round_number-1][i]).to_string();
-        //cout << "i = " << i << " current key: "; printBitsetInHex(KeyMatrix[round_number-1][i]); cout << endl;
-        for(int j = 0; j < 4; j++)
+        for(int i = 0; i < 4; i++)
         {
-            state[j][i] = state[j][i] ^ bitset<BYTE_SIZE>(current_key.substr(BYTE_SIZE*j, BYTE_SIZE));
+            string current_key = (KeyMatrix[round_number-1][i]).to_string();
+            //cout << "i = " << i << " current key: "; printBitsetInHex(KeyMatrix[round_number-1][i]); cout << endl;
+            for(int j = 0; j < 4; j++)
+            {
+                
+                state[j][i] = state[j][i] ^ bitset<BYTE_SIZE>(current_key.substr(BYTE_SIZE*j, BYTE_SIZE));
+            }
+        }
+    }
+    else // Decryption mode
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            string current_key = (KeyMatrix[round_number-1][i]).to_string();
+            //cout << "i = " << i << " current key: "; printBitsetInHex(KeyMatrix[round_number-1][i]); cout << endl;
+            for(int j = 0; j < 4; j++)
+            {
+                
+                D_state[j][i] = D_state[j][i] ^ bitset<BYTE_SIZE>(current_key.substr(BYTE_SIZE*j, BYTE_SIZE));
+            }
         }
     }
 }
@@ -368,19 +446,140 @@ void AES::AES_Encryption_Round(int round_number)
 {
     if(round_number == 0){
         // Pre-Round transformation
-        AddRoundKey(1);
+        AddRoundKey(1, true);
     }else if(round_number < 10){
         SubBytes();
         ShiftRows();
         MixColumns();
-        AddRoundKey(round_number+1);
+        AddRoundKey(round_number+1, true);
     }else if(round_number == 10){
         SubBytes();
         ShiftRows();
-        AddRoundKey(11);
+        AddRoundKey(11, true);
     }
     //cout << "Output of Round " << round_number << " is " << endl;
     //printState();
+}
+
+string AES::AES_Decryption(string& CipherText, bool is_empty)
+{
+    if(is_empty){ // First Block of 128 bits
+        for(int i = 0; i < 4; i++)
+        {
+            vector<bitset<BYTE_SIZE>> word;
+            for(int j = BYTE_SIZE*i; j < INPUT_SIZE-1; j+=32)
+            {
+                word.push_back(bitset<BYTE_SIZE>(CipherText.substr(j, BYTE_SIZE)));
+            }
+            D_state.push_back(word);
+        }
+    }else{ // Subsequent blocks of 128 bits
+        int k = 0;
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                D_state[j][i] = bitset<BYTE_SIZE>(CipherText.substr(k, BYTE_SIZE));
+                k += 8;
+            }
+        }
+    }
+    
+    for(int round = 10; round >= 0; round--)
+    {
+        AES_Decryption_Round(round);
+    }
+    string result = "";
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            string temp = D_state[j][i].to_string();
+            result = result + BinaryToHex(bitset<4>(temp.substr(0,4))) + BinaryToHex(bitset<4>(temp.substr(4,4)));
+        }
+    }
+    return result;
+}
+
+void AES::AES_Decryption_Round(int round_number)
+{
+    if(round_number == 10){
+        // Pre-Round transformation
+        AddRoundKey(11, false);
+    }else if(round_number < 10 && round_number != 0){
+        InvShiftRows();
+        InvSubBytes();
+        AddRoundKey(round_number+1, false);
+        InvMixColumns();
+    }else if(round_number == 0){
+        InvShiftRows();
+        InvSubBytes();
+        AddRoundKey(1, false);
+    }
+    //cout << "Output of Round " << round_number << " is " << endl;
+    //printState();
+}
+
+void AES::InvMixColumns()
+{
+    for(int i = 0; i < 4; i++)
+    {
+        vector<bitset<BYTE_SIZE>> column;
+        vector<bitset<BYTE_SIZE>> multiplied_column;
+        for(int j = 0; j < 4; j++)
+        {
+            column.push_back(D_state[j][i]); // (j, i) for column
+        }
+        for(int k = 0; k < 4; k++)
+        {
+            bitset<BYTE_SIZE> xor_result;
+            for(int l = 0; l < 4; l++)
+            {
+                xor_result = xor_result ^ polynomial_multiplication(InvConstMatrix[k][l], column[l]);
+            }
+            multiplied_column.push_back(xor_result);
+        }
+        for(int j = 0; j < 4; j++)
+        {
+            D_state[j][i] = multiplied_column[j];
+        }
+    }
+}
+
+void AES::InvShiftRows()
+{
+    vector<vector<bitset<BYTE_SIZE>>> temp;
+    for(int i = 0; i < 4; i++){
+        vector<bitset<BYTE_SIZE>> t;
+        for(int j = 0; j < 4; j++){
+            t.push_back(D_state[i][modulo(j-i, 4)]);
+        }
+        temp.push_back(t);
+    }
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            D_state[i][j] = temp[i][j];
+        }
+    }
+}
+
+void AES::InvSubBytes()
+{
+    for(int i = 0; i < 4; i++)
+    {
+        for(int j = 0; j < 4; j++)
+        {
+            bitset<4> row(D_state[j][i].to_string().substr(0, 4));
+            bitset<4> col(D_state[j][i].to_string().substr(4, 4));
+            int r = (int) BinaryToHex(row) - '0';
+            int c = (int) BinaryToHex(col) - '0';
+            if(r > 9) {
+                r = (int) BinaryToHex(row) - 'a' + 10;
+            }
+            if(c > 9) {
+                c = (int) BinaryToHex(col) - 'a' + 10;
+            }
+            D_state[j][i] = InvSubByteTable[r][c];
+        }
+    }
 }
 
 int main()
@@ -390,22 +589,60 @@ int main()
     string AES_key_hex; string AES_key_bin = "";
     cin >> plain_text_hex;
     cin >> AES_key_hex;
-    
+    int plain_text_length = plain_text_hex.length(); // Actual length.
+    int pad_characters = 32 - (plain_text_length % 32); // this many 0s we have to append to the last block of plain text
+    if(pad_characters != 32){
+        for(int i = 0; i < pad_characters; i++){
+            plain_text_hex = plain_text_hex + '0';
+        }  
+    }
+    //cout << "plain text hex: " << plain_text_hex << endl;
     for(int i = 0; i < plain_text_hex.length(); i++){
         plain_text_bin = plain_text_bin + HexToBinary(plain_text_hex.at(i)).to_string();
     }
-    //cout << plain_text_bin << endl;
     for(int i = 0; i < AES_key_hex.length(); i++){
         AES_key_bin = AES_key_bin + HexToBinary(AES_key_hex.at(i)).to_string();
     }
     
+    bool is_empty = true;
     AES* obj = new AES(AES_key_bin);
-    string enc = obj->AES_Encryption(plain_text_bin);
-    cout << enc << endl;
+
+    // Encryption ECB Mode
+    string cipher_text_hex = "";
+    for(int i = 0; i < plain_text_bin.length(); i+=INPUT_SIZE){
+        string piece = plain_text_bin.substr(i, INPUT_SIZE);
+        if(i == 0){
+            is_empty = true;
+        }else{
+            is_empty = false;
+        }
+        string enc = obj->AES_Encryption(piece, is_empty);
+        cout << enc;
+        cipher_text_hex = cipher_text_hex + enc;
+    }
+    cout << endl;
+
+    // Decryption ECB mode
+    is_empty = true;
+    string cipher_text_bin = "";
+    for(int i = 0; i < cipher_text_hex.length(); i++){
+        cipher_text_bin = cipher_text_bin + HexToBinary(cipher_text_hex.at(i)).to_string();
+    }
+    string decryption = "";
+    for(int i = 0; i < cipher_text_bin.length(); i+=INPUT_SIZE){
+        string piece = cipher_text_bin.substr(i, INPUT_SIZE);
+        if(i == 0){
+            is_empty = true;
+        }else{
+            is_empty = false;
+        }
+        string dec = obj->AES_Decryption(piece, is_empty);
+        decryption = decryption + dec;
+        //cout << dec;
+    }
+    cout << decryption.substr(0, plain_text_length) << endl; // Remove the excess padded zeros
+
     return 0;
 }
 // Sample Input: 00112233445566778899aabbccddeeff Key: 000102030405060708090a0b0c0d0e0f
 // SampleOutput: 69c4e0d86a7b0430d8cdb78070b4c55a DEc: 00112233445566778899aabbccddeeff
-/*
-Written By- Shashwat Kadam (10/02/2019).
-*/
